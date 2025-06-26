@@ -1,5 +1,6 @@
 import feedparser
 import datetime
+import requests
 
 FEED_URL = "https://www.espncricinfo.com/rss/content/story/feeds/1.xml"
 
@@ -17,7 +18,6 @@ rss_feeds = {
 }
 
 def summarize_with_ollama(text, model='mistral'):
-    import requests
     prompt = f"Summarize the following news item in one sentence:\n\n{text}"
     response = requests.post(
         "http://localhost:11434/api/chat",
@@ -32,11 +32,7 @@ def summarize_with_ollama(text, model='mistral'):
         return response.json().get("message", {}).get("content", "⚠️ No content in response.")
     return f"⚠️ Failed to get summary. Status code: {response.status_code}"
 
-
-
-
 def format_entry_for_ollama(entry):
-    from datetime import datetime
 
     title = entry.get("title", "").strip()
     summary = entry.get("summary", "").strip()

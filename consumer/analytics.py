@@ -18,7 +18,7 @@ def analyze_ticks():
         analysis[symbol] = {
             "start": prices[0],
             "end": prices[-1],
-            "change": change,
+            "change": change, 
             "percent_change": pct_change,
             "last_price": prices[-1]
         }

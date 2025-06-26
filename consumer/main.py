@@ -2,8 +2,7 @@ from kafka import KafkaConsumer
 import json
 from analytics import update_symbol_data, analyze_ticks
 from llm_agent import summarize_market
-
-
+import time
 
 consumer = KafkaConsumer(
     "market_ticks",
@@ -13,15 +12,17 @@ consumer = KafkaConsumer(
     group_id="tick-consumer"
 )
 
+last_summary_ts = 0
+SUMMARY_INTERVAL = 60
+
 for msg in consumer:
     tick = msg.value
     update_symbol_data(tick)
 
     analysis = analyze_ticks()
-    # print("[📈 ANALYSIS]", analysis)
 
-    # 🧠 Add condition so LLM doesn’t run on every tick
-    if analysis:
+    now = time.time()
+    if analysis and now - last_summary_ts > SUMMARY_INTERVAL:
         summary = summarize_market(analysis)
         print("[🤖 SUMMARY]", summary)
-
+        last_summary_ts = now
